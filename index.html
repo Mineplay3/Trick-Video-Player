@@ -12,6 +12,13 @@
             <source>
         </video>
         
+        <div class="playercontrols">
+            <button id="play" onclick="playpause()">Pause</button>
+
+            <button id="mute" onclick="muteunmute()">Mute</button>
+
+            <input type="range" id="volume" oninput ="volume()" value="100">
+        </div>
         <progress id="progressbar" max="100" value="50">
     </div>
 
@@ -19,6 +26,42 @@
 </body>
 
 <script>
+    var video = document.getElementById("video");
+
+    function volume() {
+        video.volume = document.getElementById("volume").value/100;
+
+        if (video.muted == true) {
+            video.muted = false;
+            document.getElementById("mute").innerText = "Mute";
+        }
+    }
+
+    function muteunmute() {
+        if (video.muted == true) {
+            video.muted = false;
+            document.getElementById("mute").innerText = "Mute";
+            document.getElementById("volume").value = video.volume*100;
+        }
+
+        else {
+            video.muted = true;
+            document.getElementById("mute").innerText = "Unmute";
+            document.getElementById("volume").value = 0;
+        }
+    }
+
+    function playpause() {
+        if (video.paused == true) {
+            video.play();
+            document.getElementById("play").innerText = "Pause";
+        }
+
+        else {
+            video.pause();
+            document.getElementById("play").innerText = "Play";
+        }
+    }
 
     function cubicBezier(t, p1, p2) {
         // Ensure t is within the range [0, 1]
@@ -39,8 +82,6 @@
 
         return [x, y];
         }
-
-    var video = document.getElementById("video");
 
     function startvid() {
         video.currentTime = 0;
