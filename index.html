@@ -8,21 +8,26 @@
 </head>
 <body>
     <div class="player">
-        <video id="video" oncontextmenu="return false;" muted>
-            <source>
-        </video>
+        <div  onclick="redo()" class="restart">
+            Restart Video <i class="fa-solid fa-rotate-right"></i>
+        </div>
         
-        <div class="playercontrols">
-            <button id="play" onclick="playpause()">Pause</button>
+        <video id="video" oncontextmenu="return false;" muted onclick="playpause()">
+            <source>
+        </video>  
 
-            <button id="mute" onclick="muteunmute()">Mute</button>
+        <div class="playercontrols">
+            <button id="play" onclick="playpause()"><i class="fa-solid fa-pause"></i></button>
+
+            <button id="mute" onclick="muteunmute()"><i class="fa-solid fa-volume-high"></i></button>
 
             <input type="range" id="volume" oninput ="volume()" value="100">
         </div>
-        <progress id="progressbar" max="100" value="50">
+
+        <progress id="progressbar" max="100" value="50"></progress>
     </div>
 
-    <div id="test">0.0%</div>
+    <!-- <div id="test">0.0%</div> -->
 </body>
 
 <script>
@@ -33,20 +38,40 @@
 
         if (video.muted == true) {
             video.muted = false;
-            document.getElementById("mute").innerText = "Mute";
+            document.getElementById("mute").innerHTML = `<i class="fa-solid fa-volume-low"></i>`;
+        }
+
+        if (document.getElementById("volume").value == 0) {
+            video.muted = true;
+            document.getElementById("mute").innerHTML = `<i class="fa-solid fa-volume-xmark"></i>`;
+        }
+
+        else if (document.getElementById("volume").value > 50) {
+            document.getElementById("mute").innerHTML = `<i class="fa-solid fa-volume-high"></i>`
+        } 
+
+        else {
+            document.getElementById("mute").innerHTML = `<i class="fa-solid fa-volume-low"></i>`
         }
     }
 
     function muteunmute() {
         if (video.muted == true) {
             video.muted = false;
-            document.getElementById("mute").innerText = "Mute";
             document.getElementById("volume").value = video.volume*100;
+            if (video.volume == 0) {
+                document.getElementById("mute").innerHTML = `<i class="fa-solid fa-volume-off"></i>`;
+            }
+
+            else {
+                volume();
+            }
+            
         }
 
         else {
             video.muted = true;
-            document.getElementById("mute").innerText = "Unmute";
+            document.getElementById("mute").innerHTML = `<i class="fa-solid fa-volume-xmark"></i>`;
             document.getElementById("volume").value = 0;
         }
     }
@@ -54,12 +79,12 @@
     function playpause() {
         if (video.paused == true) {
             video.play();
-            document.getElementById("play").innerText = "Pause";
+            document.getElementById("play").innerHTML = `<i class="fa-solid fa-pause"></i>`;
         }
 
         else {
             video.pause();
-            document.getElementById("play").innerText = "Play";
+            document.getElementById("play").innerHTML = '<i class="fa-solid fa-play"></i>';
         }
     }
 
@@ -84,9 +109,14 @@
         }
 
     function startvid() {
+        document.getElementsByClassName("restart")[0].style.zIndex = -1;
+        document.getElementsByClassName("playercontrols")[0].style.zIndex = 1;
+        document.getElementById("progressbar").style.zIndex = 1;
+
+        document.getElementById("play").innerHTML = `<i class="fa-solid fa-pause"></i>`;
         video.currentTime = 0;
         video.play();
-
+        
         setTimeout(function () {
             video.muted = false;
         }, 100)
@@ -102,15 +132,22 @@
             progress2 = cubicBezier(progress, p1, p2)[0] * 100;
             // progress2 = progress * 100;
 
-            document.getElementById('test').innerHTML = progress2 + "% | " + ((progress2-progress * 100)).toFixed(0);
+            // document.getElementById('test').innerHTML = progress2 + "% | " + ((progress2-progress * 100)).toFixed(0);
 
             document.getElementById("progressbar").value = progress2;
 
-            if (progress >= 100) {
+            if (progress2 >= 100) {
+                document.getElementsByClassName("restart")[0].style.zIndex = 1;
+                document.getElementsByClassName("playercontrols")[0].style.zIndex = -1;
+                document.getElementById("progressbar").style.zIndex = -1;
                 clearInterval(loop);
             }
         }, 100);
 
+    }
+
+    function redo() {
+        startvid();
     }
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -126,4 +163,6 @@
     }
     
 </script>
+
+<script src="https://kit.fontawesome.com/e103c5acd0.js" crossorigin="anonymous"></script>
 </html>
